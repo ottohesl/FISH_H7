@@ -23,10 +23,10 @@
 #include "main.h"
 #include "cmsis_os.h"
 
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "JY901S.h"
+#include"SBUS_T.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -49,9 +49,9 @@
 
 /* USER CODE END Variables */
 /* Definitions for SUBS_Task */
-osThreadId_t SUBS_TaskHandle;
-const osThreadAttr_t SUBS_Task_attributes = {
-  .name = "SUBS_Task",
+osThreadId_t SBUS_TaskHandle;
+const osThreadAttr_t SBUS_Task_attributes = {
+  .name = "SBUS_Task",
   .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
@@ -76,10 +76,10 @@ const osThreadAttr_t Control_attributes = {
   .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
-/* Definitions for SUBS */
-osMessageQueueId_t SUBSHandle;
-const osMessageQueueAttr_t SUBS_attributes = {
-  .name = "SUBS"
+/* Definitions for SBUS */
+osMessageQueueId_t SBUSHandle;
+const osMessageQueueAttr_t SBUS_attributes = {
+  .name = "SBUS"
 };
 /* Definitions for JY901S */
 osMessageQueueId_t JY901SHandle;
@@ -92,7 +92,7 @@ const osMessageQueueAttr_t JY901S_attributes = {
 
 /* USER CODE END FunctionPrototypes */
 
-void SUBS_Recevie(void *argument);
+void SBUS_Recevie(void *argument);
 void GPS_Receive(void *argument);
 void JY901S_Receive(void *argument);
 void Start_Control(void *argument);
@@ -123,7 +123,7 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the queue(s) */
   /* creation of SUBS */
-  SUBSHandle = osMessageQueueNew (16, sizeof(uint16_t), &SUBS_attributes);
+  SBUSHandle = osMessageQueueNew (16, sizeof(SBUS_Command_t*), &SBUS_attributes);
 
   /* creation of JY901S */
   JY901SHandle = osMessageQueueNew (16, sizeof(jy901*), &JY901S_attributes);
@@ -133,8 +133,8 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* creation of SUBS_Task */
-  SUBS_TaskHandle = osThreadNew(SUBS_Recevie, NULL, &SUBS_Task_attributes);
+  /* creation of SBUS_Task */
+  SBUS_TaskHandle = osThreadNew(SBUS_Recevie, NULL, &SBUS_Task_attributes);
 
   /* creation of GPS_Task */
   GPS_TaskHandle = osThreadNew(GPS_Receive, NULL, &GPS_Task_attributes);
@@ -162,7 +162,7 @@ void MX_FREERTOS_Init(void) {
   * @retval None
   */
 /* USER CODE END Header_SUBS_Recevie */
-__weak void SUBS_Recevie(void *argument)
+__weak void SBUS_Recevie(void *argument)
 {
   /* USER CODE BEGIN SUBS_Recevie */
   /* Infinite loop */
