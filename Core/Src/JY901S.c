@@ -359,8 +359,8 @@ static int16_t Gyroscope_HL_Combine(uint8_t h,uint8_t l) {
  * @param      huart  串口句柄（用于数据发送的串口）
  * @retval     无
  * @note       1. 数据格式化为易读字符串，包含单位说明
- *             2. 当前为注释状态，可根据需求启用HAL_UART_Transmit发送
- *             3. 支持加速度/角速度/角度/温度/磁场/四元数全量发送
+ *                  2. 当前为注释状态，可根据需求启用HAL_UART_Transmit发送
+ *                  3. 支持加速度/角速度/角度/温度/磁场/四元数全量发送
  */
 void Gyroscope_Data_Send(UART_HandleTypeDef *huart) {
     const static int size=100; // 字符串缓冲区大小
